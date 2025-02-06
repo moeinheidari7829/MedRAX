@@ -24,19 +24,19 @@ def initialize_agent(prompt_file, model_dir="/model-weights", temp_dir="temp", d
 
     tools_dict = {
         "ChestXRayClassifierTool": ChestXRayClassifierTool(device=device),
-        "ChestXRayReportGeneratorTool": ChestXRayReportGeneratorTool(
-            cache_dir=model_dir, device=device
-        ),
         "ChestXRaySegmentationTool": ChestXRaySegmentationTool(device=device),
         "LlavaMedTool": LlavaMedTool(cache_dir=model_dir, device=device, load_in_8bit=True),
         "XRayVQATool": XRayVQATool(cache_dir=model_dir, device=device),
-        "ImageVisualizerTool": ImageVisualizerTool(),
+        "ChestXRayReportGeneratorTool": ChestXRayReportGeneratorTool(
+            cache_dir=model_dir, device=device
+        ),
         "XRayPhraseGroundingTool": XRayPhraseGroundingTool(
             cache_dir=model_dir, temp_dir=temp_dir, load_in_8bit=True, device=device
         ),
         "ChestXRayGeneratorTool": ChestXRayGeneratorTool(
             model_path=f"{model_dir}/roentgen", temp_dir=temp_dir, device=device
         ),
+        "ImageVisualizerTool": ImageVisualizerTool(),
         "DicomProcessorTool": DicomProcessorTool(temp_dir=temp_dir),
     }
 
@@ -57,7 +57,12 @@ def initialize_agent(prompt_file, model_dir="/model-weights", temp_dir="temp", d
 
 if __name__ == "__main__":
     print("Starting server...")
-    agent, tools_dict = initialize_agent("medrax/docs/system_prompts.txt")
+
+    # Setup model_dir to where you want to download the weights
+    # Some tools needs you to download the weights beforehand from Hugging Face
+    agent, tools_dict = initialize_agent(
+        "medrax/docs/system_prompts.txt", model_dir="/model-weights"
+    )
     demo = create_demo(agent, tools_dict)
 
     demo.launch(server_name="0.0.0.0", server_port=8585, share=True)
