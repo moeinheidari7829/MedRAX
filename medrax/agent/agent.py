@@ -12,7 +12,7 @@ from langchain_core.tools import BaseTool
 # this is a comment
 _ = load_dotenv()
 
-
+#moving forward
 class ToolCallLog(TypedDict):
     """
     A TypedDict representing a log entry for a tool call.
